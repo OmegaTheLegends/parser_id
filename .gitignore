@@ -1,0 +1,6 @@
+__pycache__/*
+*.log
+.venv
+all_sku.xlsx
+sber_id_url.txt
+castorama_sku.xlsx
