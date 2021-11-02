@@ -2,6 +2,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from bs4 import BeautifulSoup as bs
 import pandas
 import time, datetime, random
@@ -32,11 +34,12 @@ class ozon:
         }
 
 
-        self.options = webdriver.FirefoxOptions()
+        self.options = Options()
         # user-agent
         self.options.set_preference("general.useragent.override", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0")
         self.options.headless = True
         self.options.set_preference("http.response.timeout", 30)
+        self.options.binary_location = "/usr/bin/firefox"
         # disable webdriver mode
         self.options.set_preference("dom.webdriver.enabled", False)
         self.profile = webdriver.FirefoxProfile()
@@ -98,7 +101,7 @@ class ozon:
                                 pass
 
                             self.ROW += 1
-                            print(IDS[i], 'Товар не найден')
+                            # print(IDS[i], 'Товар не найден')
                             continue
                     except Exception as e:
                         pass
@@ -123,7 +126,7 @@ class ozon:
                                 pass
 
                             self.ROW += 1
-                            print(IDS[i], 'Товар закончился')
+                            # print(IDS[i], 'Товар закончился')
                             continue
                     except Exception as e:
                         pass
@@ -164,7 +167,7 @@ class ozon:
                 try:
                     price = soup.find('span', class_='c2h5 c2h6').text
                     price = price.strip().replace(' ','').replace('₽','').replace('\u2009','')
-                    print(price)
+                    # print(price)
                 except:
                     # try:
                     #     price = str(soup.find('h2', class_='e7z1').text.replace('\n','').strip())
