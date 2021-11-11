@@ -178,20 +178,20 @@ class ozon:
                 except:
                     name = None
                 try:
-                    main_stars = soup.find('div', class_='_3OTE k0ds _2Ji0 e7y9')
-                    stars = main_stars.find('div', class_='_3xol').get('style')
+                    main_stars = soup.find('div', class_='ui-G ui-F7 ui-G2 e7y9')
+                    stars = main_stars.find('div', class_='ui-G0').get('style')
                     stars = stars.replace('width:','').replace(';','').replace('%','')
                     stars = float(stars) / 20
                 except:
                     stars = 0
                 try:
-                    reports = soup.find('a', class_='_1-6r _3UDF').get('title')
+                    reports = soup.find('a', class_='ui-b3 ui-f0').get('title')
                     if 'ставить' in reports:
                         self.drive.refresh()
                         time.sleep(1.5)
                         html = self.drive.page_source
                         soup = bs(html, 'lxml')
-                        reports = soup.find('a', class_='_1-6r _3UDF').get('title')
+                        reports = soup.find('a', class_='ui-b3 ui-f0').get('title')
 
                     if 'отз' not in reports:
                         reports = 0
@@ -199,7 +199,7 @@ class ozon:
                         reports = reports.split(' отз')[0]
                 except:
                     reports = 0
-                #print(f"{href=}, {fotos=}, {price=}, {name=}, {stars=}, {reports=}")
+                # print(f"{href=}, {fotos=}, {price=}, {name=}, {stars=}, {reports=}")
                 self.DF.at[self.ROW,'SKU'] = int(IDS[i])
                 self.DF.at[self.ROW,'URL'] = str(href)
                 self.DF.at[self.ROW,'NAME'] = str(name)
