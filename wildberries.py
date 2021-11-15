@@ -1,4 +1,4 @@
-import requests, pandas, datetime, json, numpy as np, time
+import requests, pandas, datetime, json, numpy as np
 
 class WB_REQ:
     def __init__(self):
@@ -52,12 +52,16 @@ class WB_REQ:
         self.DF.at[self.ROW,'BRAND'] = str(info.get('brand'))
         self.DF.at[self.ROW,'NAME'] = str(info.get('name'))
         self.DF.at[self.ROW,'STOCK'] = str(stock)
-        try:
-            self.DF.at[self.ROW,'PRICE'] = info['extended'].get('basicPriceU') // 100
-            self.DF.at[self.ROW,'SALE'] = info['extended'].get('basicSale')
-        except:
-            self.DF.at[self.ROW,'PRICE'] = info['extended'].get('clientPriceU') // 100
-            self.DF.at[self.ROW,'SALE'] = info['extended'].get('clientSale')
+        if 'extended' in info:
+            try:
+                self.DF.at[self.ROW,'PRICE'] = info['extended'].get('basicPriceU') // 100
+                self.DF.at[self.ROW,'SALE'] = info['extended'].get('basicSale')
+            except:
+                self.DF.at[self.ROW,'PRICE'] = info['extended'].get('clientPriceU') // 100
+                self.DF.at[self.ROW,'SALE'] = info['extended'].get('clientSale')
+        else:
+            self.DF.at[self.ROW,'PRICE'] = info.get('priceU') // 100
+            self.DF.at[self.ROW,'SALE'] = info.get('salePriceU')
         self.DF.at[self.ROW,'STARS'] = info.get('rating')
         self.DF.at[self.ROW,'REPORTS'] = info.get('feedbacks')
         self.DF.at[self.ROW,'FOTOS'] = info.get('pics')
@@ -76,11 +80,9 @@ class WB_REQ:
         self.ROW += 1
 
     def main(self):
-        start_time = time.time()
         for i in range(len(self.xlsx.WB)):
             id, one_s, barcode = self.xlsx.iat[i,2], self.xlsx.iat[i,0], self.xlsx.iat[i,1]
             if str(id) not in [None,np.NaN,np.nan,np.NAN,'nan','',' '] and id != 0:
-                # print(int(id))
                 data = self.get_info(int(id))
                 if data == 400:
                     self.DF.at[self.ROW,'SKU'] = id
@@ -108,9 +110,6 @@ class WB_REQ:
                     pass
                 self.ROW += 1
         self.DF.to_excel(f'/opt/reports/wb/WB_{datetime.datetime.today().strftime("%d.%m.%Y")}.xlsx', index=False)
-        # print(self.get_info('6066201'))
-        # print("--- %s seconds ---" % (time.time() - start_time))
-
 
 def start():
     wb = WB_REQ()
