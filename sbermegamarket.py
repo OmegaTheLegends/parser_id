@@ -7,8 +7,8 @@ class sber:
     def __init__(self):
         self.xlsx = pd.read_excel('all_sku.xlsx')
         self.xlsx['SBER'] = self.xlsx['SBER'].fillna(0)
-        self.SAVE_FOLDER = '/opt/reports/sber/' #linux 
-        # self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
+        # self.SAVE_FOLDER = '/opt/reports/sber/' #linux 
+        self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
         self.headers = {
         'authority': "sbermegamarket.ru",
         'accept': "application/json",
@@ -31,13 +31,19 @@ class sber:
         response = requests.post('https://sbermegamarket.ru/api/mobile/v1/catalogService/catalog/search', data=payload, headers=self.headers)
         response.encoding = response.apparent_encoding
         data = json.loads(response.text)
-        url = data['processor']['url']
-        url = str(url)
-        url = url.split('#related')
-        url = url[0]
-        with open('sber_id_url.txt', 'a+', encoding='utf-8') as file:
-            file.write(str(t_id) + ' : ' + str(url) + '\n')
-        self.get_info(url, t_id, i_row)
+        if data['processor']:
+            url = data['processor']['url']
+            url = str(url)
+            url = url.split('#related')
+            url = url[0]
+            with open('sber_id_url.txt', 'a+', encoding='utf-8') as file:
+                file.write(str(t_id) + ' : ' + str(url) + '\n')
+            self.get_info(url, t_id, i_row)
+        else:
+            self.DF.at[self.ROW,'SKU'] = int(t_id)
+            self.DF.at[self.ROW,'URL'] = str('no url')
+            self.ROW += 1
+
 
     def get_info(self, url, t_id, i_row):
         self.URLS.update({t_id : url})
