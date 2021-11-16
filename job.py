@@ -7,6 +7,7 @@ from ozon import start as oz
 from wildberries import start as wb
 from sbermegamarket import main as sb
 from castorama import start as casto
+from dns import main as dns_start
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -37,6 +38,14 @@ def job_sber():
     except Exception as Arg:
         logging.warning('error SBER' + f'\n {Arg}')
 
+def job_dns():
+    try:
+        logging.info("I'm running on thread DNS-SHOP  %s" % threading.current_thread())
+        dns_start()
+        logging.info('Complite DNS-SHOP')
+    except Exception as Arg:
+        logging.warning('error DNS-SHOP' + f'\n {Arg}')
+
 def job_casto():
     try:
         logging.info("I'm running on thread Castorama  %s" % threading.current_thread())
@@ -51,6 +60,7 @@ def run_threaded(job_func):
 
 schedule.every().day.at('00:01').do(run_threaded, job_wb)
 schedule.every().day.at('01:30').do(run_threaded, job_sber)
+schedule.every().day.at('02:00').do(run_threaded, job_dns)
 schedule.every().day.at('01:05').do(run_threaded, job_oz)
 schedule.every().day.at('04:01').do(run_threaded, job_casto)
 
