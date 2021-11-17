@@ -1,7 +1,7 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-import datetime, os, json
+import datetime, os, json, time
 
 class dns_main:
     def __init__(self):
@@ -79,6 +79,7 @@ class dns_main:
             #     self.DF.at[self.ROW,'URL'] = data['data']['offers']['url']
             self.DF.at[self.ROW,'DESCRIPTION'] = data['data']['description']
             self.ROW += 1
+            time.sleep(1)
         
         driver.close()
         driver.quit()

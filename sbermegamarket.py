@@ -7,8 +7,8 @@ class sber:
     def __init__(self):
         self.xlsx = pd.read_excel('all_sku.xlsx')
         self.xlsx['SBER'] = self.xlsx['SBER'].fillna(0)
-        # self.SAVE_FOLDER = '/opt/reports/sber/' #linux 
-        self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
+        self.SAVE_FOLDER = '/opt/reports/sber/' #linux 
+        # self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
         self.headers = {
         'authority': "sbermegamarket.ru",
         'accept': "application/json",
