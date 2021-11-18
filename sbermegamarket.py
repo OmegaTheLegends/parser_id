@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import requests, datetime, time, json
+import requests, datetime, time, json, os
 import pandas as pd
 from bs4 import BeautifulSoup as bs
 
@@ -7,8 +7,10 @@ class sber:
     def __init__(self):
         self.xlsx = pd.read_excel('all_sku.xlsx')
         self.xlsx['SBER'] = self.xlsx['SBER'].fillna(0)
-        self.SAVE_FOLDER = '/opt/reports/sber/' #linux 
-        # self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
+        if os.name == 'nt':
+            self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
+        else:
+            self.SAVE_FOLDER = '/opt/reports/sber/' #linux 
         self.headers = {
         'authority': "sbermegamarket.ru",
         'accept': "application/json",

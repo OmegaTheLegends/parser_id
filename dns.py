@@ -5,13 +5,17 @@ import datetime, os, json, time
 
 class dns_main:
     def __init__(self):
-        self.GECKO = '/opt/geckodriver' # linux
-        self.SAVE_FOLDER = '/opt/reports/dns/' #linux 
-        # self.GECKO = 'C:\\TEMP\\geckodriver.exe' # windows
-        # self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
+        if os.name == 'nt':
+            self.GECKO = 'C:\\TEMP\\geckodriver.exe' # windows
+            self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
+            self.sku_xlsx = pd.read_excel('dns_sku.xlsx')
+            self.url_file_url = 'dns_sku_id.txt'
+        else:
+            self.GECKO = '/opt/geckodriver' # linux
+            self.SAVE_FOLDER = '/opt/reports/dns/' #linux 
+            self.sku_xlsx = pd.read_excel('/opt/parser_id/dns_sku.xlsx')
+            self.url_file_url = '/opt/parser_id/dns_sku_id.txt'
         self.ROW = 1
-        self.sku_xlsx = pd.read_excel('/opt/parser_id/dns_sku.xlsx')
-        self.url_file_url = '/opt/parser_id/dns_sku_id.txt'
         self.url_data = {}
 
         self.headers = {
@@ -29,7 +33,6 @@ class dns_main:
         self.options.binary_location = "/usr/bin/firefox"
         self.options.headless = True
         # disable webdriver mode
-        self.options.set_preference("dom.webdriver.enabled", False)
         self.profile = webdriver.FirefoxProfile()
         self.profile.set_preference("permissions.default.image", 2)
 
