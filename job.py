@@ -8,6 +8,7 @@ from wildberries import start as wb
 from sbermegamarket import main as sb
 from castorama import start as casto
 from dns import main as dns_start
+from citilink import main as citi
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -54,6 +55,14 @@ def job_casto():
     except Exception as Arg:
         logging.warning('error Castorama' + f'\n {Arg}')
 
+def job_citi():
+    try:
+        logging.info("I'm running on thread Citilink  %s" % threading.current_thread())
+        citi()
+        logging.info('Complite Citilink')
+    except Exception as Arg:
+        logging.warning('error Citilink' + f'\n {Arg}')
+
 def run_threaded(job_func):
     job_thread = threading.Thread(target=job_func)
     job_thread.start()
@@ -63,6 +72,7 @@ schedule.every().day.at('01:30').do(run_threaded, job_sber)
 schedule.every().day.at('02:00').do(run_threaded, job_dns)
 schedule.every().day.at('01:05').do(run_threaded, job_oz)
 schedule.every().day.at('04:01').do(run_threaded, job_casto)
+schedule.every().day.at('04:20').do(run_threaded, job_citi)
 
 
 
