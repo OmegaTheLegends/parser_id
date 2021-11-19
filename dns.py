@@ -30,11 +30,11 @@ class dns_main:
 
         self.options = webdriver.FirefoxOptions()
         # user-agent
-        self.options.binary_location = "/usr/bin/firefox"
-        self.options.headless = True
+        # self.options.binary_location = "/usr/bin/firefox"
+        self.options.headless = False
         # disable webdriver mode
         self.profile = webdriver.FirefoxProfile()
-        self.profile.set_preference("permissions.default.image", 2)
+        self.profile.set_preference("permissions.default.image", 1)
 
 
     def start(self):
@@ -52,13 +52,16 @@ class dns_main:
                     data = line.strip().split(':')
                     self.url_data.update({str(data[0]):data[1]})
 
-        for id in self.sku_xlsx.sku:
+        with open('dns_sku.txt', 'r', encoding='utf8') as f:
+            sku_list = f.read().split('\n')
+
+        for id in sku_list:
             if self.url_data.get(str(id)):
                 eid = self.url_data.get(str(id))
                 driver.get(f'https://www.dns-shop.ru/product/microdata/{eid}/')
                 response = driver.page_source
             else:
-                driver.get(f'https://www.dns-shop.ru/search/?q={id}')
+                driver.get(f'https://www.dns-shop.ru/search/?q={str(id)}')
                 source = driver.page_source
                 soup = bs(source, 'lxml')
                 eid = soup.find('div', class_='container product-card').get('data-product-card')
