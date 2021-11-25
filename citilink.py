@@ -11,6 +11,7 @@ class citi:
         self.DF = pd.DataFrame(columns=['SKU','NAME','BARCODE','URL','PRICE','STARS','REPORTS'])
         self.SKU = {}
         self.session = requests.Session()
+        self.session.cookies.clear()
     
     def get_info(self, soup, sku, url):
         ## Название товара
@@ -85,12 +86,14 @@ class citi:
             print(sku, response.status_code)
 
     def start(self):
+        self.session.get('https://www.citilink.ru')
         df = pd.read_excel('citilink.xlsx')
         for i in range(len(df.sku)):
             self.SKU.update({str(df.iat[i,0]):str(df.iat[i,1])})
         for sku in self.SKU:
             self.get_page(sku)
             time.sleep(2 if i % 5 != 0 else 10)
+        self.session.close()
         self.DF.to_excel(f'/opt/reports/citilink/citilink_{datetime.datetime.today().strftime("%d.%m.%Y")}.xlsx', index=False)
 
 def main():

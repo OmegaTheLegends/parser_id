@@ -8,12 +8,10 @@ class dns_main:
         if os.name == 'nt':
             self.GECKO = 'C:\\TEMP\\geckodriver.exe' # windows
             self.SAVE_FOLDER = 'C:\\TEMP\\' # windows
-            self.sku_xlsx = pd.read_excel('dns_sku.xlsx')
             self.url_file_url = 'dns_sku_id.txt'
         else:
             self.GECKO = '/opt/geckodriver' # linux
-            self.SAVE_FOLDER = '/opt/reports/dns/' #linux 
-            self.sku_xlsx = pd.read_excel('/opt/parser_id/dns_sku.xlsx')
+            self.SAVE_FOLDER = '/opt/reports/dns/' #linux
             self.url_file_url = '/opt/parser_id/dns_sku_id.txt'
         self.ROW = 1
         self.url_data = {}
@@ -23,18 +21,18 @@ class dns_main:
             'Accept-Encoding': 'gzip, deflate, br',
             'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
             'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive',
+            # 'Connection': 'keep-alive',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
 
 
         self.options = webdriver.FirefoxOptions()
         # user-agent
-        # self.options.binary_location = "/usr/bin/firefox"
-        self.options.headless = False
+        self.options.binary_location = "/usr/bin/firefox"
+        self.options.headless = True
         # disable webdriver mode
         self.profile = webdriver.FirefoxProfile()
-        self.profile.set_preference("permissions.default.image", 1)
+        self.profile.set_preference("permissions.default.image", 2)
 
 
     def start(self):
@@ -59,9 +57,11 @@ class dns_main:
             if self.url_data.get(str(id)):
                 eid = self.url_data.get(str(id))
                 driver.get(f'https://www.dns-shop.ru/product/microdata/{eid}/')
+                print(driver.current_url)
                 response = driver.page_source
             else:
                 driver.get(f'https://www.dns-shop.ru/search/?q={str(id)}')
+                print(driver.current_url)
                 source = driver.page_source
                 soup = bs(source, 'lxml')
                 eid = soup.find('div', class_='container product-card').get('data-product-card')
@@ -86,7 +86,7 @@ class dns_main:
             self.DF.at[self.ROW,'DESCRIPTION'] = data['data']['description']
             self.ROW += 1
             time.sleep(1)
-        
+
         driver.close()
         driver.quit()
         self.DF.to_excel(f'{self.SAVE_FOLDER}dns_{datetime.datetime.today().strftime("%d.%m.%Y")}.xlsx', index=False)
