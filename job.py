@@ -70,7 +70,7 @@ def run_threaded(job_func):
 schedule.every().day.at('00:01').do(run_threaded, job_wb)
 schedule.every().day.at('01:30').do(run_threaded, job_sber)
 schedule.every().day.at('02:00').do(run_threaded, job_dns)
-schedule.every().day.at('01:05').do(run_threaded, job_oz)
+#schedule.every().day.at('01:05').do(run_threaded, job_oz)
 schedule.every().day.at('04:01').do(run_threaded, job_casto)
 schedule.every().day.at('04:20').do(run_threaded, job_citi)
 

@@ -57,11 +57,11 @@ class dns_main:
             if self.url_data.get(str(id)):
                 eid = self.url_data.get(str(id))
                 driver.get(f'https://www.dns-shop.ru/product/microdata/{eid}/')
-                print(driver.current_url)
+                # print(driver.current_url)
                 response = driver.page_source
             else:
                 driver.get(f'https://www.dns-shop.ru/search/?q={str(id)}')
-                print(driver.current_url)
+                # print(driver.current_url)
                 source = driver.page_source
                 soup = bs(source, 'lxml')
                 eid = soup.find('div', class_='container product-card').get('data-product-card')
@@ -70,20 +70,38 @@ class dns_main:
                 driver.get(f'https://www.dns-shop.ru/product/microdata/{eid}/')
                 response = driver.page_source
             soup = bs(response, 'lxml')
-            json_info = soup.find('div', id='json').text
-            data = json.loads(json_info)
-            self.DF.at[self.ROW,'SKU'] = str(id)
-            self.DF.at[self.ROW,'NAME'] = data['data']['name']
-            if 'offers' in data['data']:
-                self.DF.at[self.ROW,'PRICE'] = int(data['data']['offers']['price'])
-            else:
-                self.DF.at[self.ROW,'PRICE'] = 0
-            if 'aggregateRating' in data['data']:
-                self.DF.at[self.ROW,'STARTS'] = data['data']['aggregateRating']['ratingValue']
-                self.DF.at[self.ROW,'REPORTS'] = data['data']['aggregateRating']['reviewCount']
-            # if 'offers' in data['data']:
-            #     self.DF.at[self.ROW,'URL'] = data['data']['offers']['url']
-            self.DF.at[self.ROW,'DESCRIPTION'] = data['data']['description']
+            try:
+                json_info = soup.find('div', id='json').text
+                data = json.loads(json_info)
+                self.DF.at[self.ROW,'SKU'] = str(id)
+                self.DF.at[self.ROW,'NAME'] = data['data']['name']
+                if 'offers' in data['data']:
+                    self.DF.at[self.ROW,'PRICE'] = int(data['data']['offers']['price'])
+                else:
+                    self.DF.at[self.ROW,'PRICE'] = 0
+                if 'aggregateRating' in data['data']:
+                    self.DF.at[self.ROW,'STARTS'] = data['data']['aggregateRating']['ratingValue']
+                    self.DF.at[self.ROW,'REPORTS'] = data['data']['aggregateRating']['reviewCount']
+                # if 'offers' in data['data']:
+                #     self.DF.at[self.ROW,'URL'] = data['data']['offers']['url']
+                self.DF.at[self.ROW,'DESCRIPTION'] = data['data']['description']
+            except:
+                print(f'JSON not found {id=}')
+                list_data = soup.find('tbody').find_all('tr')
+                for i in list_data:
+                    y = i.get('id')
+                    if y == '/data/name':
+                        self.DF.at[self.ROW,'NAME'] = i.find(class_='objectBox').text
+                    if y == '/data/offer/price':
+                        self.DF.at[self.ROW,'PRICE'] = int(i.find(class_='objectBox').text)
+                    else:
+                        self.DF.at[self.ROW,'PRICE'] = 0
+                    if y == '/data/aggregateRating/ratingValue':
+                        self.DF.at[self.ROW,'STARTS'] = i.find(class_='objectBox').text
+                    if y == '/data/aggregateRating/reviewCount':
+                        self.DF.at[self.ROW,'REPORTS'] = i.find(class_='objectBox').text
+                    if y == '/data/description':
+                        self.DF.at[self.ROW,'DESCRIPTION'] = i.find(class_='objectBox').text
             self.ROW += 1
             time.sleep(1)
 

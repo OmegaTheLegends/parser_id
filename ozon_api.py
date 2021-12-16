@@ -1,14 +1,15 @@
 import requests
 import json
 from pprint import pprint
+from myapi import ozon
 
 url = 'http://api-seller.ozon.ru/v2/product/info'
 
 headers = {
         'Content-Type': 'application/json',
         'Host': 'api-seller.ozon.ru',
-        'Client-Id': '1657',
-        'Api-Key': '69f150e7-9ef5-430a-96b8-b0881999273e'
+        'Client-Id': ozon.get('client'),
+        'Api-Key': ozon.get('key')
     }
 
 data = {
