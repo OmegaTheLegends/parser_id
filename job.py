@@ -3,7 +3,8 @@ import time, os
 import schedule
 os.chdir('/opt/parser_id/')
 #### Parsers
-from ozon import start as oz
+from ozon_api import start as oz
+from aliexpress import main as ali
 from wildberries import start as wb
 from sbermegamarket import main as sb
 from castorama import start as casto
@@ -63,16 +64,25 @@ def job_citi():
     except Exception as Arg:
         logging.warning('error Citilink' + f'\n {Arg}')
 
+def job_ali():
+    try:
+        logging.info("I'm running on thread Aliexpress  %s" % threading.current_thread())
+        ali()
+        logging.info('Complite Aliexpress')
+    except Exception as Arg:
+        logging.warning('error Aliexpress' + f'\n {Arg}')
+
 def run_threaded(job_func):
     job_thread = threading.Thread(target=job_func)
     job_thread.start()
 
 schedule.every().day.at('00:01').do(run_threaded, job_wb)
+schedule.every().day.at('01:05').do(run_threaded, job_oz)
 schedule.every().day.at('01:30').do(run_threaded, job_sber)
 schedule.every().day.at('02:00').do(run_threaded, job_dns)
-#schedule.every().day.at('01:05').do(run_threaded, job_oz)
-schedule.every().day.at('04:01').do(run_threaded, job_casto)
-schedule.every().day.at('04:20').do(run_threaded, job_citi)
+schedule.every().day.at('02:30').do(run_threaded, job_ali)
+schedule.every().day.at('03:01').do(run_threaded, job_casto)
+schedule.every().day.at('03:20').do(run_threaded, job_citi)
 
 
 

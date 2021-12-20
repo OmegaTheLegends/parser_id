@@ -35,24 +35,26 @@ class alibaba:
         else:
             self.DF.at[self.ROW,'SKU'] = id
             self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
-        self.ROW += 1
-    
+
     def start(self):
         xlsx = pd.read_excel('/opt/parser_id/aliexpress.xlsx')
         for i in range(len(xlsx.ШК)):
                 sku = str(xlsx.iat[i,4])
-                if sku != '0' and sku != 0:
+                if len(sku) > 2:
                     self.SKU.update({str(sku):str(xlsx.iat[i,3])})
-                    print(sku)
+                    # print(sku)
                     time.sleep(1 if i % 15 != 0 else 5)
                     self.get_info_from_page(sku)
                 else:
                     self.DF.at[self.ROW,'SKU'] = sku
-                    self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(sku)
-                    self.ROW += 1
+                    self.DF.at[self.ROW,'BARCODE'] = str(xlsx.iat[i,3])
+                self.ROW += 1
                 # if self.ROW == 10:
                 #     break
         self.DF.to_excel(f'/opt/reports/aliexpress/aliexpress_{datetime.datetime.today().strftime("%d.%m.%Y")}.xlsx', index=False)
 
-if __name__ == '__main__':
+def main():
     alibaba().start()
+
+if __name__ == '__main__':
+    main()
