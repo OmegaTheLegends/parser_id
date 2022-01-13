@@ -9,7 +9,7 @@ class alibaba:
             'Accept-Encoding' : 'gzip, deflate, br',
             'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0'
         }
-        self.DF = pd.DataFrame(columns=['SKU','NAME','BARCODE','PRICE','DISCOUNT','MAXPRICE','STARS','REPORTS','LIKES','TRADE','DESCRIPTION'])
+        self.DF = pd.DataFrame(columns=['SKU','NAME','BARCODE','STOCK','PRICE','DISCOUNT','MAXPRICE','STARS','REPORTS','LIKES','TRADE','DESCRIPTION'])
         self.ROW = 1
         self.SKU = {}
 
@@ -17,24 +17,29 @@ class alibaba:
         response = requests.get(f'https://aliexpress.ru/item/{str(id)}')
         soup = bs(response.text, 'lxml')
         data = json.loads(soup.find('script', id="__AER_DATA__").text)
-
-        if 'children' in data['widgets'][0]:
-            self.DF.at[self.ROW,'SKU'] = id
-            self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
-            self.DF.at[self.ROW,'NAME'] = data['widgets'][0]['children'][7]['children'][0]['props']['name']
-            self.DF.at[self.ROW,'DESCRIPTION'] = data['widgets'][0]['children'][7]['children'][0]['props']['description']
-            self.DF.at[self.ROW,'LIKES'] = data['widgets'][0]['children'][7]['children'][0]['props']['likes']
-            self.DF.at[self.ROW,'DISCOUNT'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['discount']
-            self.DF.at[self.ROW,'PRICE'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['formattedActivityPrice']
-            self.DF.at[self.ROW,'MAXPRICE'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['formattedPrice']
-            self.DF.at[self.ROW,'STARS'] = data['widgets'][0]['children'][7]['children'][0]['props']['rating']['middle']
-            #all_stars  = data['widgets'][0]['children'][7]['children'][0]['props']['rating']['middle']['stars']
-            #banner  = data['widgets'][0]['children'][7]['children'][0]['props']['banner']
-            self.DF.at[self.ROW,'TRADE'] = data['widgets'][0]['children'][7]['children'][0]['props']['tradeInfo']['tradeCount']
-            self.DF.at[self.ROW,'REPORTS'] = data['widgets'][0]['children'][7]['children'][0]['props']['reviews']
-        else:
-            self.DF.at[self.ROW,'SKU'] = id
-            self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
+        try:
+            if 'children' in data['widgets'][0]:
+                self.DF.at[self.ROW,'SKU'] = id
+                self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
+                self.DF.at[self.ROW,'NAME'] = data['widgets'][0]['children'][7]['children'][0]['props']['name']
+                self.DF.at[self.ROW,'STOCK'] = data['widgets'][0]['children'][7]['children'][0]['props']['quantity']['totalCount']
+                self.DF.at[self.ROW,'DESCRIPTION'] = data['widgets'][0]['children'][7]['children'][0]['props']['description']
+                self.DF.at[self.ROW,'LIKES'] = data['widgets'][0]['children'][7]['children'][0]['props']['likes']
+                self.DF.at[self.ROW,'DISCOUNT'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['discount']
+                self.DF.at[self.ROW,'PRICE'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['formattedActivityPrice']
+                self.DF.at[self.ROW,'MAXPRICE'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['formattedPrice']
+                self.DF.at[self.ROW,'STARS'] = data['widgets'][0]['children'][7]['children'][0]['props']['rating']['middle']
+                #all_stars  = data['widgets'][0]['children'][7]['children'][0]['props']['rating']['middle']['stars']
+                #banner  = data['widgets'][0]['children'][7]['children'][0]['props']['banner']
+                self.DF.at[self.ROW,'TRADE'] = data['widgets'][0]['children'][7]['children'][0]['props']['tradeInfo']['tradeCount']
+                self.DF.at[self.ROW,'REPORTS'] = data['widgets'][0]['children'][7]['children'][0]['props']['reviews']
+            else:
+                self.DF.at[self.ROW,'SKU'] = id
+                self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
+        except:
+                self.DF.at[self.ROW,'SKU'] = id
+                self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
+                self.DF.at[self.ROW,'NAME'] = "error get data"
 
     def start(self):
         xlsx = pd.read_excel('/opt/parser_id/aliexpress.xlsx')
