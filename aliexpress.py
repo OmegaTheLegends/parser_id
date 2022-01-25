@@ -21,18 +21,18 @@ class alibaba:
             if 'children' in data['widgets'][0]:
                 self.DF.at[self.ROW,'SKU'] = id
                 self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
-                self.DF.at[self.ROW,'NAME'] = data['widgets'][0]['children'][7]['children'][0]['props']['name']
-                self.DF.at[self.ROW,'STOCK'] = data['widgets'][0]['children'][7]['children'][0]['props']['quantity']['totalCount']
-                self.DF.at[self.ROW,'DESCRIPTION'] = data['widgets'][0]['children'][7]['children'][0]['props']['description']
-                self.DF.at[self.ROW,'LIKES'] = data['widgets'][0]['children'][7]['children'][0]['props']['likes']
-                self.DF.at[self.ROW,'DISCOUNT'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['discount']
-                self.DF.at[self.ROW,'PRICE'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['formattedActivityPrice']
-                self.DF.at[self.ROW,'MAXPRICE'] = data['widgets'][0]['children'][7]['children'][0]['props']['price']['formattedPrice']
-                self.DF.at[self.ROW,'STARS'] = data['widgets'][0]['children'][7]['children'][0]['props']['rating']['middle']
-                #all_stars  = data['widgets'][0]['children'][7]['children'][0]['props']['rating']['middle']['stars']
-                #banner  = data['widgets'][0]['children'][7]['children'][0]['props']['banner']
-                self.DF.at[self.ROW,'TRADE'] = data['widgets'][0]['children'][7]['children'][0]['props']['tradeInfo']['tradeCount']
-                self.DF.at[self.ROW,'REPORTS'] = data['widgets'][0]['children'][7]['children'][0]['props']['reviews']
+                self.DF.at[self.ROW,'NAME'] = data['widgets'][0]['props']['name']
+                self.DF.at[self.ROW,'STOCK'] = data['widgets'][0]['props']['quantity']['totalCount']
+                self.DF.at[self.ROW,'DESCRIPTION'] = data['widgets'][0]['props']['description']
+                self.DF.at[self.ROW,'LIKES'] = data['widgets'][0]['props']['likes']
+                self.DF.at[self.ROW,'DISCOUNT'] = data['widgets'][0]['props']['price']['discount']
+                self.DF.at[self.ROW,'PRICE'] = data['widgets'][0]['props']['price']['formattedActivityPrice']
+                self.DF.at[self.ROW,'MAXPRICE'] = data['widgets'][0]['props']['price']['formattedPrice']
+                self.DF.at[self.ROW,'STARS'] = data['widgets'][0]['props']['rating']['middle']
+                #all_stars  = data['widgets'][0]['props']['rating']['middle']['stars']
+                #banner  = data['widgets'][0]['props']['banner']
+                self.DF.at[self.ROW,'TRADE'] = data['widgets'][0]['props']['tradeInfo']['tradeCount']
+                self.DF.at[self.ROW,'REPORTS'] = data['widgets'][0]['props']['reviews']
             else:
                 self.DF.at[self.ROW,'SKU'] = id
                 self.DF.at[self.ROW,'BARCODE'] = self.SKU.get(id)
@@ -63,3 +63,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # alibaba().get_info_from_page('1005002418584740')
